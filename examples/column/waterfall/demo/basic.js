@@ -1,7 +1,7 @@
 import { Waterfall } from '@antv/g2plot';
 
 const data = [
-  { type: '日用品', money: 300 },
+  { type: '日用品', money: 120 },
   { type: '伙食费', money: 900 },
   { type: '交通费', money: 200 },
   { type: '水电费', money: 300 },
