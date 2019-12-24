@@ -7,7 +7,7 @@ const data = [
   { type: '水电费', money: 300 },
   { type: '房租', money: 1200 },
   { type: '商场消费', money: 1000 },
-  { type: '应酬交际', money: -2000 },
+  { type: '应酬红包', money: -2000 },
 ];
 
 const waterfallPlot = new Waterfall(document.getElementById('container'), {

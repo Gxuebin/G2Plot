@@ -53,6 +53,57 @@ describe('waterfall plot', () => {
     expect(lines.length).toBe(data.length);
   });
 
+  it('custom color, string', () => {
+    waterfallPlot.updateConfig({
+      color: 'rgba(0, 255, 255, 0.2)',
+    });
+    waterfallPlot.render();
+    const shapes = waterfallLayer.view
+      .get('elements')[0]
+      .getShapes()
+      .filter((s) => s.name === 'interval');
+    expect(_.every(shapes, (s: Shape) => s.attr('fill') === 'rgba(0, 255, 255, 0.2)')).toBe(true);
+  });
+
+  it('custom color, object', () => {
+    waterfallPlot.updateConfig({
+      color: {
+        rising: 'red',
+        falling: 'green',
+        total: '#ddd',
+      },
+    });
+    waterfallPlot.render();
+    const shapes = waterfallLayer.view
+      .get('elements')[0]
+      .getShapes()
+      .filter((s) => s.name === 'interval');
+    expect(shapes[0].attr('fill')).toBe('red');
+    expect(shapes[6].attr('fill')).toBe('green');
+    expect(_.last(shapes).attr('fill')).toBe('#ddd');
+  });
+
+  it('use callback to custom color', () => {
+    waterfallPlot.updateConfig({
+      color: (type, value, values, index) => {
+        if (index === data.length) {
+          return '#ddd';
+        } else if (value > 0) {
+          return 'rgba(255, 0, 0, 0.45)';
+        }
+        return 'rgba(255, 255, 0, 0.45)';
+      },
+    });
+    waterfallPlot.render();
+    const shapes = waterfallLayer.view
+      .get('elements')[0]
+      .getShapes()
+      .filter((s) => s.name === 'interval');
+    expect(shapes[0].attr('fill')).toBe('rgba(255, 0, 0, 0.45)');
+    expect(shapes[6].attr('fill')).toBe('rgba(255, 255, 0, 0.45)');
+    expect(_.last(shapes).attr('fill')).toBe('#ddd');
+  });
+
   it('not show total', () => {
     waterfallPlot.updateConfig({
       showTotal: {
@@ -114,6 +165,6 @@ describe('waterfall plot', () => {
   });
 
   afterAll(() => {
-    waterfallPlot.destroy();
+    // waterfallPlot.destroy();
   });
 });

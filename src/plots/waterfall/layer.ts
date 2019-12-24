@@ -47,7 +47,7 @@ export interface WaterfallViewConfig extends ViewConfig {
   };
   color?:
     | string
-    | string[]
+    | { rising: string; falling: string; total?: string }
     | ((type: string, value: number | null, values: number | number[], index: number) => string);
   waterfallStyle?: WaterfallStyle | ((...args: any[]) => WaterfallStyle);
 }
@@ -75,9 +75,6 @@ export default class WaterfallLayer extends ViewLayer<WaterfallLayerConfig> {
       },
       /** 迁移线 */
       leaderLine: {
-        visible: true,
-      },
-      cutDown: {
         visible: true,
       },
       /** 显示总计 */
@@ -214,8 +211,6 @@ export default class WaterfallLayer extends ViewLayer<WaterfallLayerConfig> {
   }
 
   protected coord() {}
-  protected animation() {}
-  protected annotation() {}
 
   protected parseEvents(eventParser) {
     super.parseEvents(EventParser);
@@ -260,18 +255,17 @@ export default class WaterfallLayer extends ViewLayer<WaterfallLayerConfig> {
     };
     if (_.isFunction(options.color)) {
       config.callback = options.color;
-    } else if (_.isObject(options.color)) {
-      config.callback = (d) => options.color[d];
     } else {
       let risingColor = '#f4664a';
       let fallingColor = '#30bf78';
       let totalColor = 'rgba(0, 0, 0, 0.25)';
       if (_.isString(options.color)) {
         risingColor = fallingColor = totalColor = options.color;
-      } else if (_.isArray(options.color)) {
-        risingColor = options.color[0];
-        fallingColor = options.color[1] || risingColor;
-        totalColor = options.color[2];
+      } else if (_.isObject(options.color)) {
+        const { rising, falling, total } = options.color;
+        risingColor = rising;
+        fallingColor = falling;
+        totalColor = total;
       }
       config.callback = (type, value, values: number | number[], index: number) => {
         if (index === this.options.data.length) {
